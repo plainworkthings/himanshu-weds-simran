@@ -241,6 +241,7 @@
   const strips = $$('[data-strip]').map((el) => ({ el, kind: el.dataset.strip, top: 0, h: 0, t: '' }));
   const drifts = $$('[data-drift]').map((el) => ({ el, top: 0, h: 0 }));
   const walker = $('#walker'), datePage = $('#date');
+  const turns = $$('[data-turn]').map((el) => ({ el, kind: el.dataset.turn, orb: $('.turn__orb', el), stars: $('.turn__stars', el), top: 0, h: 0 }));
   const portrait = $('.portrait');
 
   let vh = 0, col = 0, gateDist = 1, dateTop = 0, dateH = 0, portraitTop = 0;
@@ -254,6 +255,7 @@
     for (const s of strips) { s.top = pageY(s.el); s.h = s.el.offsetHeight; }
     for (const d of drifts) { d.top = pageY(d.el.parentElement); d.h = d.el.parentElement.offsetHeight; }
     dateTop = pageY(datePage); dateH = datePage.offsetHeight;
+    for (const t of turns) { t.top = pageY(t.el); t.h = t.el.offsetHeight; }
     portraitTop = pageY(portrait);
     lastY = -1;
     requestTick();
@@ -312,9 +314,19 @@
     for (const d of drifts) {
       if (d.top + d.h < y || d.top > y + vh) continue;
       const prog = clamp((c - (d.top + d.h / 2)) / vh, -1, 1);
-      d.el.style.transform = `translate3d(0,${(prog * d.h * .05).toFixed(1)}px,0)`;
+      d.el.style.transform = `translate3d(0,${(prog * d.h * .025).toFixed(1)}px,0)`;
     }
     if (portraitTop < y + vh + 200 && portraitTop > y - vh) mandala.style.transform = `rotate(${(y * .05).toFixed(2)}deg)`;
+
+    // between the pehars the sky keeps time: the sun sets, rises, and the moon comes up
+    for (const t of turns) {
+      if (t.top + t.h < y || t.top > y + vh) continue;
+      const p = clamp((y + vh - t.top) / (vh + t.h));
+      const oy = (t.kind === 'set' ? .04 + p * 1.05 : 1.02 - p * .98) * t.h;
+      const ox = (t.kind === 'set' ? -1 : 1) * (.27 + (p - .5) * .1) * col; // keeps to one side, clear of the caption
+      t.orb.style.transform = `translate3d(${ox.toFixed(1)}px,${oy.toFixed(1)}px,0)`;
+      if (t.stars) t.stars.style.opacity = clamp((p - .42) * 2.4).toFixed(2);
+    }
 
     // the couple stroll in on the date page
     if (dateTop < y + vh && dateTop + dateH > y) {

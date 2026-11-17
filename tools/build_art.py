@@ -51,9 +51,11 @@ def inpaint_text(im, rect, thr=9, grow=7, radius=9):
     return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
 
 
-def up2(im, k=2):
-    big = im.resize((im.width * k, im.height * k), Image.LANCZOS)
-    return big.filter(ImageFilter.UnsharpMask(radius=1.6, percent=55, threshold=2))
+def up2(im, k=3):
+    """Enlarge a video frame and redraw its edges cleanly (the frames are only 464 px wide)."""
+    big = im.resize((im.width * k, im.height * k), Image.BICUBIC)
+    big = kuwahara(kuwahara(big, 2), 4)
+    return big.filter(ImageFilter.UnsharpMask(radius=2, percent=90, threshold=2))
 
 
 def row_colour(im, y):
@@ -82,7 +84,7 @@ def strip(im, y0, y1, fade_top=0.0, fade_bottom=0.0):
     return crop
 
 
-def save(im, name, q=80):
+def save(im, name, q=76):
     im.save(OUT / name, "WEBP", quality=q, method=6, alpha_quality=90)
     return name
 
@@ -121,11 +123,11 @@ def paint(im, r=3, passes=2, sat=1.18, con=1.06):
 colours = {}
 
 hero = up2(inpaint_text(load("f_2.40.png"), (250, 0, 464, 60), thr=6))
-save(hero, "hero.webp", 82)
+save(hero, "hero.webp", 78)
 colours["hero_top"] = row_colour(hero, 20)
 
 date = inpaint_text(load("f_20.0.png"), (96, 340, 372, 627))
-save(up2(date), "date.webp", 82)
+save(up2(date), "date.webp", 78)
 
 scenes = {
     # name: (frame, text rect or None, top end, top fade, bottom start, bottom fade)
@@ -141,7 +143,6 @@ for name, (frame, rect, t_end, t_fade, b_start, b_fade) in scenes.items():
     if rect:
         im = inpaint_text(im, rect)
     big = up2(im)
-    big.save(OUT.parent.parent / "source" / f"plate-{name}.jpg", quality=90)
     save(strip(big, 0, t_end, fade_bottom=t_fade), f"{name}-top.webp")
     save(strip(big, b_start, 1, fade_top=b_fade), f"{name}-bottom.webp")
     colours[name] = [row_colour(big, big.height * (t_end - t_fade * .2)), row_colour(big, big.height * (b_start + b_fade * .2))]
@@ -180,11 +181,8 @@ def cutout(name, target_h, outline=6, r=3, pad=14):
     return canvas
 
 
-save(cutout("beach", 1200, outline=0, r=3, pad=0), "couple-embrace.webp", 84)
 save(cutout("walk", 760), "couple-walk.webp", 84)
-save(cutout("carry", 760), "couple-carry.webp", 84)
 save(cutout("car-wide", 760), "couple-lean.webp", 84)
-save(cutout("car-close", 800), "couple-stand.webp", 84)
 
 # ── 3. whole photos repainted, for the gallery ──────────────────────────
 for name in ["beach", "car-wide", "carry", "walk", "car-close"]:

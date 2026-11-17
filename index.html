@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poiret+One&text=Reception&display=swap">
 <link rel="preload" as="image" href="assets/art/door-left.webp">
 <link rel="preload" as="image" href="assets/art/door-right.webp">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=11">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -53,7 +53,7 @@
   <span class="music__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
 </button>
 
-<div class="pehar-pill" id="pill" aria-hidden="true"><span id="pillText"></span></div>
+<div class="pehar-pill" id="pill" aria-hidden="true"><i class="pehar-pill__orb"></i><span id="pillText"></span></div>
 <div class="burst" id="burst" aria-hidden="true"></div>
 
 <main>
@@ -119,7 +119,7 @@
     <figure class="portrait" data-reveal>
       <svg class="portrait__mandala" id="mandala" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
       <div class="portrait__clip" style="clip-path:url(#c-cusp5)">
-        <img data-drift src="assets/art/couple-embrace.webp" width="801" height="1200" loading="lazy" decoding="async" alt="A painted portrait of Himanshu and Simran in a quiet embrace">
+        <img data-drift src="assets/art/painting-beach.webp" width="760" height="1139" loading="lazy" decoding="async" alt="A painted portrait of Himanshu and Simran in a quiet embrace">
       </div>
       <svg class="portrait__line" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"><use href="#p-cusp5"/></svg>
       <svg class="portrait__line portrait__line--outer" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"><use href="#p-cusp5"/></svg>
@@ -174,6 +174,9 @@
   </div>
 </section>
 
+<!-- The sky keeps time: day one turns to night -->
+<div class="turn turn--dusk" data-turn="set"><span class="turn__stars" aria-hidden="true"></span><span class="turn__orb" aria-hidden="true"></span><p class="turn__text">The sun goes down on day one</p></div>
+
 <!-- 5. Sufi Night -->
 <section class="page page--sufi" id="sufi" data-pill="Sat 12 Dec · 8:00 pm" data-dark>
   <img class="page__top" data-strip="top" src="assets/art/sufi-top.webp" width="928" height="565" alt="" loading="lazy" decoding="async">
@@ -188,6 +191,9 @@
   <img class="page__bottom" data-strip="bottom" src="assets/art/sufi-bottom.webp" width="928" height="932" alt="Illustration of the couple in a red lehenga and dark sherwani" loading="lazy" decoding="async">
 </section>
 
+<!-- The sky keeps time: a new morning -->
+<div class="turn turn--dawn" data-turn="rise"><span class="turn__orb" aria-hidden="true"></span><p class="turn__text">A new morning rises</p></div>
+
 <!-- 6. Baraat and Wedding -->
 <section class="page page--baraat" id="wedding" data-pill="Sun 13 Dec · 12:00 noon">
   <img class="page__top" data-strip="top" src="assets/art/baraat-top.webp" width="928" height="698" alt="" loading="lazy" decoding="async">
@@ -201,6 +207,9 @@
   </div>
   <img class="page__bottom" data-strip="bottom" src="assets/art/baraat-bottom.webp" width="928" height="666" alt="Illustration of the baraat dancing around a flower-decked vintage car" loading="lazy" decoding="async">
 </section>
+
+<!-- The sky keeps time: night falls again -->
+<div class="turn turn--night" data-turn="moon"><span class="turn__stars" aria-hidden="true"></span><span class="turn__orb turn__orb--moon" aria-hidden="true"></span><p class="turn__text">And night falls once more</p></div>
 
 <!-- 7. Reception -->
 <section class="page page--reception" id="reception" data-pill="Sun 13 Dec · 8:00 pm" data-dark>
@@ -296,10 +305,9 @@
     </div>
   </div>
   <img class="page__bottom" data-strip="bottom" src="assets/art/closing-bottom.webp" width="928" height="666" alt="" loading="lazy" decoding="async">
-  <p class="credit">Photographs: MOW · Illustrations from our invitation film</p>
 </section>
 
 </main>
-<script src="main.js?v=7" defer></script>
+<script src="main.js?v=10" defer></script>
 </body>
 </html>

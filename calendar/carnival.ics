@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Himanshu and Simran//Wedding//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:carnival@himanshu-simran-2026
+DTSTAMP:20261117T000000Z
+DTSTART:20261212T083000Z
+DTEND:20261212T123000Z
+SUMMARY:Himanshu & Simran: Carnival of Joy
+DESCRIPTION:An afternoon of flowers\, colours\, music\, games and laughter.
+LOCATION:Kanha Imperial Resort\, Umred Road\, Nagpur
+END:VEVENT
+END:VCALENDAR

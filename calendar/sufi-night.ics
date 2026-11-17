@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Himanshu and Simran//Wedding//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:sufi-night@himanshu-simran-2026
+DTSTAMP:20261117T000000Z
+DTSTART:20261212T143000Z
+DTEND:20261212T183000Z
+SUMMARY:Himanshu & Simran: Sufi Night
+DESCRIPTION:A night of dazzling outfits\, flowing sufi music and dancing.
+LOCATION:Kanha Imperial Resort\, Umred Road\, Nagpur
+END:VEVENT
+END:VCALENDAR

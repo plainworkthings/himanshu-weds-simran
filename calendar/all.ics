@@ -1,0 +1,41 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Himanshu and Simran//Wedding//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:carnival@himanshu-simran-2026
+DTSTAMP:20261117T000000Z
+DTSTART:20261212T083000Z
+DTEND:20261212T123000Z
+SUMMARY:Himanshu & Simran: Carnival of Joy
+DESCRIPTION:An afternoon of flowers\, colours\, music\, games and laughter.
+LOCATION:Kanha Imperial Resort\, Umred Road\, Nagpur
+END:VEVENT
+BEGIN:VEVENT
+UID:sufi-night@himanshu-simran-2026
+DTSTAMP:20261117T000000Z
+DTSTART:20261212T143000Z
+DTEND:20261212T183000Z
+SUMMARY:Himanshu & Simran: Sufi Night
+DESCRIPTION:A night of dazzling outfits\, flowing sufi music and dancing.
+LOCATION:Kanha Imperial Resort\, Umred Road\, Nagpur
+END:VEVENT
+BEGIN:VEVENT
+UID:wedding@himanshu-simran-2026
+DTSTAMP:20261117T000000Z
+DTSTART:20261213T063000Z
+DTEND:20261213T103000Z
+SUMMARY:Himanshu & Simran: Baraat and Wedding
+DESCRIPTION:Dhol beats\, dancing and the wedding ceremony.
+LOCATION:Kanha Imperial Resort\, Umred Road\, Nagpur
+END:VEVENT
+BEGIN:VEVENT
+UID:reception@himanshu-simran-2026
+DTSTAMP:20261117T000000Z
+DTSTART:20261213T143000Z
+DTEND:20261213T183000Z
+SUMMARY:Himanshu & Simran: Reception
+DESCRIPTION:An evening of elegance\, love and celebration.
+LOCATION:Kanha Imperial Resort\, Umred Road\, Nagpur
+END:VEVENT
+END:VCALENDAR

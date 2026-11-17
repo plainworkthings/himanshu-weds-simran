@@ -52,7 +52,7 @@
   song.volume = .7;
   function setMusic(on, retry = false) {
     wantMusic = on;
-    if (on) song.play().catch(() => { wantMusic = false; syncMusic(); if (retry) addEventListener('pointerup', () => setMusic(true), { once: true }); });
+    if (on) song.play().catch(() => { wantMusic = false; syncMusic(); if (retry) retryOnGesture(); });
     else song.pause();
     syncMusic();
   }
@@ -63,7 +63,23 @@
     musicBtn.setAttribute('aria-label', wantMusic ? 'Pause music' : 'Play music');
     return playing;
   }
-  musicBtn.addEventListener('click', () => setMusic(!wantMusic));
+  // Browsers (iOS Safari especially) only allow audio to start inside a tap. The doors open from an
+  // animation frame, not the tap itself, so the song is unlocked silently on the first touch and
+  // any blocked start is retried on the next tap.
+  let primed = false;
+  function primeSong() {
+    if (primed) return;
+    primed = true;
+    song.muted = true;
+    const p = song.play();
+    const done = () => { if (!wantMusic) { song.pause(); song.currentTime = 0; } song.muted = false; };
+    if (p && p.then) p.then(done, () => { song.muted = false; primed = false; }); else done();
+  }
+  function retryOnGesture() {
+    const go = () => { ['pointerup', 'touchend', 'click', 'keydown'].forEach((t) => removeEventListener(t, go, true)); if (!wantMusic && !song.dataset.userPaused) setMusic(true); };
+    ['pointerup', 'touchend', 'click', 'keydown'].forEach((t) => addEventListener(t, go, { capture: true, passive: true }));
+  }
+  musicBtn.addEventListener('click', () => { if (wantMusic) song.dataset.userPaused = '1'; else delete song.dataset.userPaused; setMusic(!wantMusic); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) song.pause(); else if (wantMusic) song.play().catch(() => {}); });
 
   /* ── Doors: push them open ── */
@@ -156,7 +172,7 @@
     const at = (ev) => ev.clientX - knock.getBoundingClientRect().left;
     knock.addEventListener('pointerdown', (ev) => {
       if (committed || ev.target.closest('button')) return;
-      ev.preventDefault(); wake();
+      ev.preventDefault(); wake(); primeSong();
       W = knock.getBoundingClientRect().width;
       const x = at(ev), d = x < W / 2 ? L : R;
       if (d.held) return;
@@ -182,13 +198,14 @@
       } else if (d.a > .42 || d.w > 2 || dragAngle(d) > .7) commit(); // pushed far or fast enough: it carries on
     };
     knock.addEventListener('pointerup', release); knock.addEventListener('pointercancel', release);
-    $('#knockSkip').addEventListener('click', () => { wake(); commit(); });
+    $('#knockSkip').addEventListener('click', () => { wake(); primeSong(); commit(); });
     requestAnimationFrame(frame);
   }
 
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (location.hash) {
     openDoors(true);
+    retryOnGesture(); // opened straight to a section: start the song on the first tap
   } else {
     scrollTo(0, 0);
     root.classList.add('is-locked');

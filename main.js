@@ -11,7 +11,7 @@
       // Paste the form's "pre-filled link" here: in Google Forms choose ⋮ → Get pre-filled link,
       // type the answers  name / attending / functions / guests / note  into the five questions,
       // then Get link → Copy link. The site reads the question ids from that link.
-      googleFormLink: '',
+      googleFormLink: 'https://docs.google.com/forms/d/e/1FAIpQLSfYjUvfqADoue4CZLprtm61ETY0fK2FfrF2rbFUOBjiNDoZkQ/viewform?usp=pp_url&entry.1412932122=name&entry.1069906385=attending&entry.2112312748=functions&entry.1376362738=guests&entry.812003100=note',
       // Used only while googleFormLink is empty: replies open as a WhatsApp message to this
       // number (country code, no "+", e.g. '919876543210'). Empty = guest picks the chat.
       whatsapp: '',

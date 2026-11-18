@@ -3,6 +3,9 @@
   python3 tools/add_faces.py              # uses OPENAI_API_KEY or GEMINI_API_KEY
   python3 tools/add_faces.py --dry-run    # checks the pipeline without calling any model
   python3 tools/add_faces.py --only sufi  # one scene
+  python3 tools/add_faces.py --only sufi --use ~/Downloads/sufi.png
+      # use a picture made by hand in any chat app (Grok, ChatGPT, Gemini…) instead of an API.
+      # --dry-run writes the exact pictures to upload there: source/faces/<scene>-to-upload.png
 
 The key is read from the environment or from a `.env` file in the project root
 (`OPENAI_API_KEY=...` or `GEMINI_API_KEY=...`). `.env` is git-ignored; never commit it.
@@ -113,7 +116,7 @@ def call_gemini(key, model, scene_png, size, prompt):
     raise RuntimeError("Gemini returned no image: " + json.dumps(data)[:400])
 
 
-def process(scene, provider, key, model, dry):
+def process(scene, provider, key, model, dry, use=None):
     src_path = ART / f"{scene}-bottom.webp"
     BACKUP.mkdir(parents=True, exist_ok=True)
     orig_path = BACKUP / src_path.name
@@ -141,7 +144,12 @@ def process(scene, provider, key, model, dry):
     send = fitted.resize((tw, th), Image.LANCZOS)
 
     prompt = f"{SCENES[scene]} {WHO} {STYLE}"
-    if dry:
+    (SRC / "faces").mkdir(exist_ok=True)
+    if use:
+        from PIL import ImageOps
+        out = ImageOps.fit(Image.open(Path(use).expanduser()).convert("RGB"), (tw, th), Image.LANCZOS)
+    elif dry:
+        send.save(SRC / "faces" / f"{scene}-to-upload.png")
         out = send
     else:
         print(f"  {scene}: asking {provider} ({model}) at {size}…", flush=True)
@@ -153,7 +161,6 @@ def process(scene, provider, key, model, dry):
     else:
         top = Image.new("RGB", (W, H), bg); top.paste(out, (0, cut)); out = top
     out = out.convert("RGBA"); out.putalpha(orig.getchannel("A"))
-    (SRC / "faces").mkdir(exist_ok=True)
     if not dry:
         out.save(SRC / "faces" / f"{scene}-bottom.png")  # full-quality copy of what the model made
     out.save(src_path, "WEBP", quality=82, method=6, alpha_quality=90)
@@ -164,13 +171,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--only", choices=sorted(SCENES))
+    ap.add_argument("--use", help="an image you generated yourself in a chat app; needs --only")
     args = ap.parse_args()
     provider, key, model = load_key()
-    if not args.dry_run and not key:
+    if args.use and not args.only:
+        sys.exit("--use needs --only <scene>")
+    if not args.dry_run and not args.use and not key:
         sys.exit("No OPENAI_API_KEY or GEMINI_API_KEY found (environment or .env). See the docstring.")
     for scene in [args.only] if args.only else SCENES:
         try:
-            process(scene, provider, key, model, args.dry_run)
+            process(scene, provider, key, model, args.dry_run, args.use)
         except urllib.error.HTTPError as e:
             sys.exit(f"{scene}: the image API refused the request ({e.code}): {e.read()[:400]!r}")
 

@@ -45,6 +45,7 @@ WHO = (
     "trimmed beard is the groom, Himanshu."
 )
 SCENES = {
+    "carnival": "This illustration shows the couple at an afternoon carnival of flowers and colours, with blank faces. Paint Simran's face on the bride and Himanshu's face on the groom.",
     "sufi": "This illustration shows the bride in a red-and-pink lehenga and the groom in a dark sherwani, standing "
             "together, but their faces are blank. Paint Simran's face on the bride and Himanshu's face on the groom.",
     "reception": "This illustration shows the bride in a magenta lehenga with a pink dupatta and the groom in a black "

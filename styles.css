@@ -331,13 +331,13 @@ img, video, svg, canvas { display: block; }
 @keyframes puff { from { transform: scale(.75); opacity: .35; } to { transform: scale(1.15); opacity: 1; } }
 
 /* ── Sufi Night ── */
-.page--sufi { --bg: #490102; --fg: #fbeee0; --accent: #f0d28a; --title: #fff; --pt: .2; --pb: .1; }
+.page--sufi { --bg: #490102; --fg: #fbeee0; --accent: #f0d28a; --title: #fff; --pt: .2; --pb: .06; }
 
 /* ── Baraat and Wedding ── */
 .page--baraat { --bg: #fff; --fg: #5a4650; --accent: #b8862b; --title: #c6408a; --pt: .2; --pb: .1; }
 
 /* ── Reception ── */
-.page--reception { --bg: linear-gradient(180deg, #25234a 0%, #020434 30%, #040636 100%); --fg: #f2ead8; --accent: #f0d28a; --title: #f3e2a0; --pt: .06; --pb: .16; }
+.page--reception { --bg: linear-gradient(180deg, #25234a 0%, #020434 30%, #040636 100%); --fg: #f2ead8; --accent: #f0d28a; --title: #f3e2a0; --pt: .06; --pb: .07; }
 
 /* ── Painted moments and the film ── */
 .page--gallery {

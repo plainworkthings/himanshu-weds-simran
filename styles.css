@@ -35,9 +35,9 @@ img, video, svg, canvas { display: block; }
 .gate__stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; contain: layout paint; background: #e3e2dc; }
 .gate__plate { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; transform-origin: 50% 82%; will-change: transform; }
 .gate__arch {
-  position: absolute; top: 0; left: 50%; height: 100%;
-  width: 50vh; width: 50lvh; margin-left: -25vh; margin-left: -25lvh;
-  overflow: visible; transform-origin: 50% 60%; will-change: transform, opacity; pointer-events: none;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: hidden; transform-origin: 50% 60%; will-change: transform, opacity; pointer-events: none;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
 }
 .gate__edge { fill: none; stroke: rgba(96, 58, 26, .6); stroke-width: 2.5; }
 .gate__soffit { fill: none; stroke: #a9794a; stroke-width: 20; }      /* the thickness of the arch */
@@ -85,7 +85,7 @@ img, video, svg, canvas { display: block; }
 @keyframes seam { 0%, 100% { opacity: 0; } 50% { opacity: .55; } }
 .doors.is-touched .doors__seam { animation: none; opacity: 0; }
 .gate.is-open .doors { opacity: 0; visibility: hidden; }
-.gate.is-instant .doors { display: none; }
+.gate.is-instant .doors, .gate.is-gone .doors, .gate.is-gone .knock { display: none; }
 
 .js .knock { display: block; position: absolute; inset: 0; z-index: 5; color: #fff7e0; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; transition: opacity .5s ease, visibility 0s .5s; }
 .knock:active { cursor: grabbing; }
@@ -280,11 +280,24 @@ img, video, svg, canvas { display: block; }
 .page--date { aspect-ratio: 464 / 832; --bg: #e9d3d6; --fg: #6b4630; --accent: #a8641c; }
 .date__plate { position: absolute; inset: 0; width: 100%; height: 100%; }
 .date__body { position: absolute; z-index: 2; left: 14%; right: 14%; top: 30%; height: 45%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--col) * .014); }
-.scratch { position: relative; padding: 0 .5em; }
+.scratch { position: relative; padding: 0 .5em; margin: 6px 0 8px; }
 .date__big { display: flex; align-items: center; justify-content: center; gap: .08em; font-size: calc(var(--col) * .2); line-height: 1; font-weight: 500; }
 .date__big i { font-style: normal; color: var(--gold); }
-.scratch__foil { position: absolute; inset: -2px -4px; width: calc(100% + 8px); height: calc(100% + 4px); border-radius: 14px; touch-action: none; cursor: grab; transition: opacity .7s ease; box-shadow: 0 4px 12px rgba(90, 60, 10, .3); }
-.scratch__foil.is-gone { opacity: 0; pointer-events: none; }
+.scratch__foil { position: absolute; z-index: 2; inset: -6px -10px; width: calc(100% + 20px); height: calc(100% + 12px); border-radius: 16px; touch-action: none; cursor: grab; transition: opacity .7s ease, transform .7s var(--ease); box-shadow: 0 0 0 2px rgba(255, 246, 214, .9), 0 0 0 3px #b8862b, 0 8px 22px rgba(120, 76, 10, .4); }
+.scratch__foil.is-gone { opacity: 0; transform: scale(1.12); pointer-events: none; }
+/* until it is touched the card begs to be scratched: it rocks, a light sweeps it, a finger shows how */
+.scratch:not(.is-touched) { animation: beg 3.4s ease-in-out infinite; }
+@keyframes beg { 0%, 62%, 100% { transform: rotate(0); } 68% { transform: rotate(-2.2deg) scale(1.03); } 74% { transform: rotate(2deg) scale(1.03); } 80% { transform: rotate(-1.2deg); } 86% { transform: rotate(0); } }
+.scratch__shine { position: absolute; z-index: 3; inset: -6px -10px; border-radius: 16px; overflow: hidden; pointer-events: none; }
+.scratch__shine::before { content: ''; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 45%; background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .75) 50%, rgba(255, 255, 255, 0)); transform: translateX(0) skewX(-14deg); animation: sweep 2.6s ease-in-out infinite; }
+@keyframes sweep { 0% { transform: translateX(0) skewX(-14deg); } 55%, 100% { transform: translateX(420%) skewX(-14deg); } }
+.scratch__hand { position: absolute; z-index: 4; left: 50%; top: 58%; width: calc(var(--col) * .13); height: auto; margin-left: calc(var(--col) * -.065); fill: #fffaf0; stroke: #5c3a0a; stroke-width: 1.8; stroke-linejoin: round; pointer-events: none; filter: drop-shadow(0 3px 4px rgba(60, 30, 0, .35)); animation: rub 2.2s ease-in-out infinite; }
+@keyframes rub { 0% { transform: translate(-90%, 10%) rotate(-12deg); opacity: 0; } 12% { opacity: 1; } 30% { transform: translate(60%, -8%) rotate(-4deg); } 48% { transform: translate(-50%, 6%) rotate(-12deg); } 66% { transform: translate(80%, -4%) rotate(-4deg); opacity: 1; } 82%, 100% { transform: translate(80%, -4%) rotate(-4deg); opacity: 0; } }
+.scratch.is-touched .scratch__shine, .scratch.is-touched .scratch__hand { display: none; }
+.scratch__dust { position: absolute; z-index: 5; width: 5px; height: 5px; border-radius: 50%; background: radial-gradient(circle, #fff6c8, #d9a83c 70%); pointer-events: none; animation: dust .7s ease-out forwards; }
+@keyframes dust { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.3); opacity: 0; } }
+.scratch.is-revealed .date__big { animation: pop .9s cubic-bezier(.2, 1.6, .4, 1) both; text-shadow: 0 0 22px rgba(255, 226, 140, .9); }
+@keyframes pop { from { transform: scale(.7); } to { transform: none; } }
 .date__month { font-family: var(--caps); font-size: calc(var(--col) * .04); letter-spacing: .32em; text-transform: uppercase; }
 .date__venue { font-size: calc(var(--col) * .06); font-style: italic; line-height: 1.2; }
 .date__venue small { display: block; font-family: var(--caps); font-style: normal; font-size: .5em; letter-spacing: .14em; text-transform: uppercase; margin-top: .3em; }
@@ -292,6 +305,14 @@ img, video, svg, canvas { display: block; }
 .countdown div + div { border-left: 1px solid rgba(107, 70, 48, .25); }
 .countdown b { display: block; font-size: calc(var(--col) * .068); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
 .countdown span { font-family: var(--caps); font-size: calc(var(--col) * .024); letter-spacing: .14em; text-transform: uppercase; }
+.unlock { display: grid; width: 100%; margin-top: calc(var(--col) * .012); }
+.unlock > * { grid-area: 1 / 1; }
+.unlock .countdown { margin-top: 0; opacity: 0; visibility: hidden; transform: translateY(14px) scale(.94); transition: opacity .8s var(--ease) .35s, transform .8s var(--ease) .35s, visibility 0s .35s; }
+.unlock__teaser { align-self: center; display: flex; align-items: center; justify-content: center; gap: .55em; margin: 0; padding: calc(var(--col) * .03) 0; font-style: italic; font-size: calc(var(--col) * .042); border-top: 1px dashed rgba(107, 70, 48, .4); border-bottom: 1px dashed rgba(107, 70, 48, .4); transition: opacity .4s, visibility 0s .4s; animation: breathe 2s ease-in-out infinite alternate; }
+.unlock__teaser svg { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.date__body.is-unlocked .unlock .countdown { opacity: 1; visibility: visible; transform: none; transition-delay: .35s, .35s, 0s; }
+.date__body.is-unlocked .unlock__teaser { opacity: 0; visibility: hidden; animation: none; }
+@keyframes breathe { from { opacity: .55; } to { opacity: 1; } }
 .doll--walk { position: absolute; z-index: 3; left: 0; bottom: 1.2%; width: 33%; }
 
 /* ── Carnival of Joy ── */

@@ -94,6 +94,7 @@
     root.classList.remove('is-locked');
     musicBtn.hidden = false;
     if (!instant) { setMusic(true, true); burst(44); }
+    setTimeout(() => gate.classList.add('is-gone'), instant ? 0 : 2000);
   }
 
   // The doors are two hinged, heavy bodies. A finger drags the edge it grabbed (or simply
@@ -253,6 +254,27 @@
     { el: $('.gate__arch--3'), start: .34, span: .56, k: 5.5 },
   ];
   const gateInner = $('#gateInner'), gateScroll = $('#gateScroll'), gatePlate = $('#gatePlate');
+  // Where scroll-driven CSS animations exist (Chrome/Android, Safari 26+), the gate is driven by the
+  // compositor, not this script, so it cannot lag behind the finger. Others fall back to the JS loop below.
+  const cssGate = !reduce && !!(window.CSS && CSS.supports('animation-timeline: view()') && CSS.supports('view-timeline: --g block'));
+  if (cssGate) {
+    const pct = (x) => `${(x * 100).toFixed(2)}%`;
+    let css = '.gate--css{view-timeline:--gate block}';
+    arches.forEach((a, i) => {
+      const f = ['0%{transform:scale(1);opacity:1}'];
+      for (let s = 0; s <= 12; s++) {
+        const q = s / 12;
+        f.push(`${pct(a.start + q * a.span)}{transform:scale(${(1 + q * q * a.k).toFixed(4)});opacity:${(1 - clamp((q - .68) / .32)).toFixed(3)}}`);
+      }
+      f.push(`100%{transform:scale(${(1 + a.k).toFixed(4)});opacity:0}`);
+      css += `@keyframes gate-a${i}{${f.join('')}}.gate--css .gate__arch--${i + 1}{animation:gate-a${i} linear both;animation-timeline:--gate;animation-range:contain 0% contain 100%}`;
+    });
+    css += '@keyframes gate-in{0%{transform:scale(.84)}80%,100%{transform:scale(1)}}.gate--css .gate__inner{animation:gate-in linear both;animation-timeline:--gate;animation-range:contain 0% contain 100%}';
+    css += '@keyframes gate-pl{0%{transform:scale(1.22)}90%,100%{transform:scale(1)}}.gate--css .gate__plate{animation:gate-pl linear both;animation-timeline:--gate;animation-range:contain 0% contain 100%}';
+    css += '@keyframes gate-sc{0%{opacity:1}12%,100%{opacity:0}}.gate--css .gate__scroll{animation:gate-sc linear both;animation-timeline:--gate;animation-range:contain 0% contain 100%}';
+    const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+    gate.classList.add('gate--css');
+  }
   const pill = $('#pill'), pillText = $('#pillText');
   const pages = $$('.page').map((el) => ({ el, pill: el.dataset.pill || '', dark: 'dark' in el.dataset, top: 0, bottom: 0 }));
   const strips = $$('[data-strip]').map((el) => ({ el, kind: el.dataset.strip, top: 0, h: 0, t: '' }));
@@ -301,9 +323,9 @@
 
     if (reduce) return;
 
-    // walk through the arches
+    // walk through the arches (fallback for browsers without scroll-driven animations)
     const p = clamp(y / gateDist);
-    if (p !== lastGateP) {
+    if (!cssGate && p !== lastGateP) {
       lastGateP = p;
       for (const a of arches) {
         const q = clamp((p - a.start) / a.span);
@@ -355,7 +377,12 @@
   addEventListener('scroll', requestTick, { passive: true });
   let rz = 0;
   const remeasure = () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(measure); };
-  addEventListener('resize', remeasure);
+  let lastW = innerWidth, lastH = innerHeight;
+  addEventListener('resize', () => {
+    // on phones the address bar sliding in and out fires resize while scrolling; re-measuring then causes jumps
+    if (innerWidth === lastW && Math.abs(innerHeight - lastH) < 160) return;
+    lastW = innerWidth; lastH = innerHeight; remeasure();
+  });
   addEventListener('load', measure);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
   if ('ResizeObserver' in window) new ResizeObserver(remeasure).observe($('main'));
@@ -386,46 +413,86 @@
   const reel = $('#reel'), reelHint = $('.reel__hint');
   reel.addEventListener('scroll', () => reelHint.classList.add('is-done'), { passive: true, once: true });
 
-  /* ── Scratch to reveal the dates ── */
+  /* ── Scratch to reveal the dates; the countdown unlocks after ── */
+  const dateBody = $('.date__body');
+  let unlockCountdown = () => {};
   (() => {
-    const cv = $('#foil');
-    if (reduce) { cv.remove(); return; }
+    const cv = $('#foil'), card = $('#scratch');
+    if (reduce) { cv.remove(); dateBody.classList.add('is-unlocked'); return; }
     const ctx = cv.getContext('2d');
-    let w = 0, h = 0, drawing = false, moved = 0, done = false, lx = 0, ly = 0;
+    let w = 0, h = 0, dpr = 1, drawing = false, moved = 0, done = false, lx = 0, ly = 0, taps = 0, dustAt = 0, buzzAt = 0;
     function paint() {
       const r = cv.getBoundingClientRect();
       if (!r.width || done) return;
-      const dpr = Math.min(devicePixelRatio || 1, 2);
+      dpr = Math.min(devicePixelRatio || 1, 2);
       w = cv.width = Math.round(r.width * dpr); h = cv.height = Math.round(r.height * dpr);
       const g = ctx.createLinearGradient(0, 0, w, h);
-      g.addColorStop(0, '#f8e19a'); g.addColorStop(.3, '#c8962f'); g.addColorStop(.55, '#f6dc8f'); g.addColorStop(.8, '#a87724'); g.addColorStop(1, '#f0d28a');
+      g.addColorStop(0, '#fbe7a6'); g.addColorStop(.28, '#c8962f'); g.addColorStop(.5, '#fff0b8'); g.addColorStop(.74, '#a87724'); g.addColorStop(1, '#f0d28a');
       ctx.globalCompositeOperation = 'source-over';
       ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = 'rgba(255,255,255,.35)';
-      for (let i = 0; i < 70; i++) ctx.fillRect(Math.random() * w, Math.random() * h, dpr * 1.5, dpr * 1.5);
-      ctx.fillStyle = '#5c3a0a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.font = `${Math.round(h * .2)}px Marcellus, Georgia, serif`;
-      ctx.fillText('SCRATCH TO REVEAL', w / 2, h / 2);
+      // brushed-metal grain and glitter
+      for (let i = 0; i < h; i += 2 * dpr) { ctx.fillStyle = `rgba(255,255,255,${(Math.random() * .08).toFixed(3)})`; ctx.fillRect(0, i, w, dpr); }
+      for (let i = 0; i < 140; i++) { ctx.fillStyle = `rgba(255,255,255,${(.3 + Math.random() * .6).toFixed(2)})`; const sz = dpr * (Math.random() < .15 ? 2.4 : 1.2); ctx.fillRect(Math.random() * w, Math.random() * h, sz, sz); }
+      ctx.strokeStyle = 'rgba(92,58,10,.55)'; ctx.lineWidth = dpr; ctx.setLineDash([4 * dpr, 4 * dpr]);
+      ctx.strokeRect(6 * dpr, 6 * dpr, w - 12 * dpr, h - 12 * dpr); ctx.setLineDash([]);
+      ctx.fillStyle = '#4a2c05'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `${Math.round(h * .26)}px Marcellus, Georgia, serif`;
+      ctx.fillText('SCRATCH ME', w / 2, h * .42);
+      ctx.font = `italic ${Math.round(h * .17)}px 'Cormorant Garamond', Georgia, serif`;
+      ctx.fillText('the dates are hiding here', w / 2, h * .72);
     }
-    function reveal() { done = true; cv.classList.add('is-gone'); cv.setAttribute('aria-hidden', 'true'); cv.tabIndex = -1; burst(18); }
+    function reveal() {
+      if (done) return;
+      done = true;
+      card.classList.add('is-touched', 'is-revealed');
+      cv.classList.add('is-gone'); cv.setAttribute('aria-hidden', 'true'); cv.tabIndex = -1;
+      burst(28);
+      if (navigator.vibrate) try { navigator.vibrate([12, 60, 24]); } catch (e) { /* not allowed */ }
+      setTimeout(() => { dateBody.classList.add('is-unlocked'); unlockCountdown(); }, 350);
+    }
+    function dust(e) {
+      const now = performance.now();
+      if (now - dustAt < 40) return;
+      dustAt = now;
+      const r = card.getBoundingClientRect();
+      for (let i = 0; i < 3; i++) {
+        const d = document.createElement('i');
+        d.className = 'scratch__dust';
+        d.style.left = `${e.clientX - r.left}px`; d.style.top = `${e.clientY - r.top}px`;
+        d.style.setProperty('--dx', `${(Math.random() * 60 - 30).toFixed(0)}px`);
+        d.style.setProperty('--dy', `${(Math.random() * 40 + 10).toFixed(0)}px`);
+        d.addEventListener('animationend', () => d.remove(), { once: true });
+        card.appendChild(d);
+      }
+      if (navigator.vibrate && now - buzzAt > 90) { buzzAt = now; try { navigator.vibrate(3); } catch (err) { /* not allowed */ } }
+    }
     function scratch(e) {
       const r = cv.getBoundingClientRect(), k = w / r.width;
       const x = (e.clientX - r.left) * k, y = (e.clientY - r.top) * k;
       ctx.globalCompositeOperation = 'destination-out';
-      ctx.lineWidth = h * .34; ctx.lineCap = 'round';
+      ctx.lineWidth = h * .42; ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(lx || x, ly || y); ctx.lineTo(x, y); ctx.stroke();
       moved += Math.hypot(x - (lx || x), y - (ly || y));
       lx = x; ly = y;
+      dust(e);
+      if (moved > w * 1.25) reveal(); // a few strokes is enough: the rest flakes away by itself
     }
-    cv.addEventListener('pointerdown', (e) => { if (done) return; drawing = true; lx = ly = 0; cv.setPointerCapture(e.pointerId); scratch(e); });
+    cv.addEventListener('pointerdown', (e) => {
+      if (done) return;
+      e.preventDefault();
+      card.classList.add('is-touched');
+      drawing = true; lx = ly = 0;
+      try { cv.setPointerCapture(e.pointerId); } catch (err) { /* synthetic pointers cannot be captured */ }
+      scratch(e);
+    });
     cv.addEventListener('pointermove', (e) => { if (drawing && !done) scratch(e); });
     const end = () => {
       if (!drawing || done) return;
       drawing = false;
-      if (moved < w * .05 || moved > w * 1.6) reveal(); // a simple tap, or enough scratching
+      if (moved < w * .05 && ++taps >= 2) reveal(); // two taps also work, for anyone who does not scratch
     };
     cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
-    cv.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!done) reveal(); } });
+    cv.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); reveal(); } });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(paint);
     addEventListener('load', paint);
     paint();
@@ -443,7 +510,20 @@
     cd.m.textContent = pad(Math.floor(s / 60));
     cd.s.textContent = pad(s % 60);
   }
-  const timer = setInterval(() => { if (!document.hidden) tick(); }, 1000);
+  let rolling = false;
+  unlockCountdown = () => {
+    // the numbers spin up to the real value, then carry on ticking
+    let s = Math.max(0, Math.floor((FIRST_EVENT - Date.now()) / 1000));
+    const target = [Math.floor(s / 86400), Math.floor(s % 86400 / 3600), Math.floor(s % 3600 / 60), s % 60];
+    const els = [cd.d, cd.h, cd.m, cd.s], t0 = performance.now(), dur = 1400;
+    rolling = true;
+    (function roll(now) {
+      const p = clamp((now - t0) / dur), e = 1 - (1 - p) ** 4;
+      els.forEach((el, i) => { const n = Math.round(target[i] * e); el.textContent = i ? pad(n) : n; });
+      if (p < 1) requestAnimationFrame(roll); else { rolling = false; tick(); }
+    })(t0);
+  };
+  const timer = setInterval(() => { if (!document.hidden && !rolling) tick(); }, 1000);
   tick();
 
   /* ── RSVP ── */

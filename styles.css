@@ -293,8 +293,6 @@ img, video, svg, canvas { display: block; }
 .scratch.is-revealed .date__big { animation: pop .9s cubic-bezier(.2, 1.6, .4, 1) both; text-shadow: 0 0 22px rgba(255, 226, 140, .9); }
 @keyframes pop { from { transform: scale(.7); } to { transform: none; } }
 .date__month { font-family: var(--caps); font-size: calc(var(--col) * .04); letter-spacing: .32em; text-transform: uppercase; }
-.date__venue { font-size: calc(var(--col) * .06); font-style: italic; line-height: 1.2; }
-.date__venue small { display: block; font-family: var(--caps); font-style: normal; font-size: .5em; letter-spacing: .14em; text-transform: uppercase; margin-top: .3em; }
 .countdown { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; margin-top: calc(var(--col) * .012); padding: calc(var(--col) * .018) 0; border-top: 1px solid rgba(107, 70, 48, .35); border-bottom: 1px solid rgba(107, 70, 48, .35); }
 .countdown div + div { border-left: 1px solid rgba(107, 70, 48, .25); }
 .countdown b { display: block; font-size: calc(var(--col) * .068); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -307,7 +305,6 @@ img, video, svg, canvas { display: block; }
 .date__body.is-unlocked .unlock .countdown { opacity: 1; visibility: visible; transform: none; transition-delay: .35s, .35s, 0s; }
 .date__body.is-unlocked .unlock__teaser { opacity: 0; visibility: hidden; animation: none; }
 @keyframes breathe { from { opacity: .55; } to { opacity: 1; } }
-.doll--walk { position: absolute; z-index: 3; left: 0; bottom: 1.2%; width: 33%; }
 
 /* ── Carnival of Joy ── */
 .page--carnival { --bg: linear-gradient(180deg, #cfe6fe, #c0ddf9); --fg: #5a3f6a; --accent: #b0447e; --title: #df4f96; --pt: .09; --pb: .2; }
@@ -430,8 +427,6 @@ img, video, svg, canvas { display: block; }
 }
 .gate__date.plaque { margin-top: 1.8lvh; padding: .65em 1.1em; font-size: clamp(.62rem, 1.5lvh, .84rem); letter-spacing: .12em; white-space: nowrap; color: #4a1d14; }
 .plaque--arch { padding: 1.6em 1.8em 1.2em; border-radius: 999px 999px 16px 16px / 90px 90px 16px 16px; }
-.plaque--arch .date__month { color: #8a5a1c; }
-.plaque--arch .date__venue { margin-top: .35em; color: #5e1a16; }
 .plaque--arch .heading { color: #5e1a16; margin: .15em 0 .2em; }
 .plaque--arch .addr { color: #4a2418; }
 .plaque--arch .kicker { color: #9a6a1f; }
@@ -479,6 +474,20 @@ main > .page:not(#couple), main > .turn {
 }
 .page[data-dark] .when__info { border-left-color: rgba(232, 196, 110, .5); }
 .page[data-dark] .when__info em { color: #f0d28a; }
+
+/* ── The date page, calmer: one gold card, a soft veil behind the words, no boxes around the rest ── */
+.page--date::after {
+  content: ''; position: absolute; z-index: 1; left: 6%; right: 6%; top: 24%; height: 56%; pointer-events: none;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255, 249, 242, .78), rgba(255, 249, 242, .5) 55%, rgba(255, 249, 242, 0) 100%);
+}
+.date__month { color: #5e1a16; margin-top: 2px; }
+.unlock__teaser { border: 0; padding: .3em 0; font-size: calc(var(--col) * .038); color: #6b4630; }
+
+/* ── Alignment rhythm: the four pehars alternate sides instead of all sitting in the middle ── */
+.page--carnival .page__body, .page--reception .page__body { align-items: flex-start; text-align: left; padding-left: 30px; padding-right: 30px; }
+.page--sufi .page__body { align-items: flex-end; text-align: right; padding-left: 30px; padding-right: 30px; }
+.page--sufi .when { flex-direction: row-reverse; text-align: right; padding: 8px 9px 8px 24px; border-radius: 22px 999px 999px 22px; }
+.page--sufi .when__info { padding: 0 14px 0 0; border-left: 0; border-right: 1px solid rgba(232, 196, 110, .5); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; }

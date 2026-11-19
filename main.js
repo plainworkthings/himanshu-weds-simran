@@ -364,7 +364,7 @@
     }
 
     // the couple stroll in on the date page
-    if (dateTop < y + vh && dateTop + dateH > y) {
+    if (walker && dateTop < y + vh && dateTop + dateH > y) {
       const prog = clamp((y + vh - dateTop - dateH * .55) / (vh * .75));
       walker.style.transform = `translate3d(${((-.3 + prog * .58) * col).toFixed(1)}px,0,0)`;
     }

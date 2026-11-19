@@ -41,6 +41,41 @@ def star_mask(a, box):
     return full
 
 
+TEMPLATE = Image.open(__import__("pathlib").Path(__file__).with_name("sparkle-template.png")).convert("L")
+
+
+def find_star(a, box):
+    """Slide the known star shape over the corner at a few sizes; the star is where the inside of the
+    shape is brightest compared with a ring just outside it. Works even where the star overlaps
+    something white, because it is the shape that is matched, not just the brightness."""
+    x0, y0, x1, y1 = box
+    c = a[y0:y1, x0:x1].astype(np.float32)
+    lum = c.mean(axis=2)
+    bg = np.asarray(Image.fromarray(lum.astype(np.uint8)).filter(ImageFilter.GaussianBlur(20))).astype(np.float32)
+    sat = (c.max(axis=2) - c.min(axis=2)) / (c.max(axis=2) + 1)
+    D = (lum - bg) - 60 * sat   # pale and neutral
+    best = None
+    for sc in np.arange(.55, 1.21, .05):
+        tw, th = max(8, round(TEMPLATE.width * sc)), max(8, round(TEMPLATE.height * sc))
+        t = np.asarray(TEMPLATE.resize((tw, th), Image.BILINEAR)) > 127
+        r = np.asarray(Image.fromarray(t.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(7))) > 0
+        ring = r & ~(np.asarray(Image.fromarray(t.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(3))) > 0)
+        h, w = D.shape
+        for yy in range(0, h - th, 2):
+            for xx in range(0, w - tw, 2):
+                win = D[yy:yy + th, xx:xx + tw]
+                score = win[t].mean() - win[ring].mean()
+                if best is None or score > best[0]:
+                    best = (score, sc, yy, xx, t)
+    score, sc, yy, xx, t = best
+    if score < 18:
+        return None
+    m = np.zeros(a.shape[:2], bool)
+    m[y0 + yy:y0 + yy + t.shape[0], x0 + xx:x0 + xx + t.shape[1]] = t
+    return m
+
+
+
 def grow(mask, px):
     return np.asarray(Image.fromarray(mask.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(px * 2 + 1))) > 0
 
@@ -50,11 +85,11 @@ def clean(src, dst):
     a = np.asarray(im).astype(np.float32)
     H, W = a.shape[:2]
     s = W / 2000
-    box = (int(W - 190 * s), int(H - 190 * s), int(W - 10 * s), int(H - 10 * s))
-    m = star_mask(a.astype(np.uint8), box)
-    if m is None or m.sum() < 400 * s * s:
+    box = (int(W - 220 * s), int(H - 220 * s), W, H)
+    m = find_star(a, box)
+    if m is None:
         print(f"  {src}: no sparkle found"); im.save(dst); return
-    hole = grow(m, max(3, int(4 * s)))
+    hole = grow(m, max(4, int(5 * s)))
     # work in a window around the star
     ys, xs = np.nonzero(hole)
     M = int(110 * s)

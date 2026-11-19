@@ -55,20 +55,26 @@ def find_star(a, box):
     sat = (c.max(axis=2) - c.min(axis=2)) / (c.max(axis=2) + 1)
     D = (lum - bg) - 60 * sat   # pale and neutral
     best = None
-    for sc in np.arange(.55, 1.21, .05):
+    # Gemini puts the star a fixed distance in from the corner (64 px on a 2000 px image), so only
+    # search a small neighbourhood of that spot, at sizes close to the expected one
+    s0 = a.shape[1] / 2000
+    ex = a.shape[1] - int((64 + 92) * s0) - x0
+    ey = a.shape[0] - int((63 + 93) * s0) - y0
+    for sc in np.arange(.9, 1.11, .05) * s0:
         tw, th = max(8, round(TEMPLATE.width * sc)), max(8, round(TEMPLATE.height * sc))
         t = np.asarray(TEMPLATE.resize((tw, th), Image.BILINEAR)) > 127
         r = np.asarray(Image.fromarray(t.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(7))) > 0
         ring = r & ~(np.asarray(Image.fromarray(t.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(3))) > 0)
         h, w = D.shape
-        for yy in range(0, h - th, 2):
-            for xx in range(0, w - tw, 2):
+        R = int(18 * s0)
+        for yy in range(max(0, ey - R), min(h - th, ey + R) + 1, 2):
+            for xx in range(max(0, ex - R), min(w - tw, ex + R) + 1, 2):
                 win = D[yy:yy + th, xx:xx + tw]
                 score = win[t].mean() - win[ring].mean()
                 if best is None or score > best[0]:
                     best = (score, sc, yy, xx, t)
     score, sc, yy, xx, t = best
-    if score < 18:
+    if score < 6:
         return None
     m = np.zeros(a.shape[:2], bool)
     m[y0 + yy:y0 + yy + t.shape[0], x0 + xx:x0 + xx + t.shape[1]] = t

@@ -481,6 +481,7 @@ main > .page:not(#couple), main > .turn {
   background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255, 249, 242, .78), rgba(255, 249, 242, .5) 55%, rgba(255, 249, 242, 0) 100%);
 }
 .date__month { color: #5e1a16; margin-top: 2px; }
+.doll--walk { position: absolute; z-index: 3; left: 0; bottom: 1.5%; width: 34%; }
 .unlock__teaser { border: 0; padding: .3em 0; font-size: calc(var(--col) * .038); color: #6b4630; }
 
 /* ── Alignment rhythm: the four pehars alternate sides instead of all sitting in the middle ── */

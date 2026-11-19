@@ -420,6 +420,32 @@ img, video, svg, canvas { display: block; }
 
 /* ───────────── Reduced motion ───────────── */
 
+/* ── Highlights: the names glow on an ivory halo; dates, times and the venue sit on a gold-edged plaque ── */
+.gate__names, .name { color: #5e1a16; text-shadow: 0 0 1px rgba(255, 249, 238, 1), 0 0 12px rgba(255, 249, 238, .95), 0 0 28px rgba(255, 246, 230, .85); }
+.parents { color: #4a2418; font-size: .8rem; }
+.plaque {
+  position: relative; width: fit-content; max-width: 100%; margin-inline: auto; padding: .75em 1.5em;
+  border-radius: 10px; color: #4a1d14;
+  background: linear-gradient(180deg, rgba(255, 252, 245, .95), rgba(251, 241, 225, .93));
+  box-shadow: 0 0 0 1px rgba(184, 134, 43, .75), 0 0 0 4px rgba(255, 250, 240, .9), 0 0 0 5px rgba(184, 134, 43, .45), 0 10px 26px rgba(70, 30, 10, .16);
+}
+.page[data-dark] .plaque {
+  color: #fff3d6;
+  background: linear-gradient(180deg, rgba(44, 12, 26, .82), rgba(26, 10, 36, .82));
+  box-shadow: 0 0 0 1px rgba(232, 196, 110, .85), 0 0 0 4px rgba(44, 12, 26, .55), 0 0 0 5px rgba(232, 196, 110, .45), 0 10px 26px rgba(0, 0, 0, .35);
+}
+.when.plaque { display: flex; font-size: .86rem; padding: .7em 1.3em; }
+.when.plaque i { opacity: .6; }
+.gate__date.plaque { margin-top: 1.8lvh; padding: .65em 1.1em; font-size: clamp(.62rem, 1.5lvh, .84rem); letter-spacing: .12em; white-space: nowrap; color: #4a1d14; }
+.plaque--arch { padding: 1.6em 1.8em 1.2em; border-radius: 999px 999px 16px 16px / 90px 90px 16px 16px; }
+.plaque--arch .date__month { color: #8a5a1c; }
+.plaque--arch .date__venue { margin-top: .35em; color: #5e1a16; }
+.plaque--arch .heading { color: #5e1a16; margin: .15em 0 .2em; }
+.plaque--arch .addr { color: #4a2418; }
+.plaque--arch .kicker { color: #9a6a1f; }
+
+.portrait__clip img.portrait__ganesha { object-position: 50% 40%; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; }
   .gate { height: 100vh; height: 100lvh; }

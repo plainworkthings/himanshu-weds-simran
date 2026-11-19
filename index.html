@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poiret+One&text=Reception&display=swap">
 <link rel="preload" as="image" href="assets/art/door-left.webp">
 <link rel="preload" as="image" href="assets/art/door-right.webp">
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=18">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -65,7 +65,7 @@
     <div class="gate__inner" id="gateInner">
       <p class="deva" lang="hi">॥ श्री गणेशाय नमः ॥</p>
       <h1 class="gate__names"><span>Himanshu</span><span class="amp">&amp;</span><span>Simran</span></h1>
-      <p class="gate__date">12 · 13 December 2026 · Nagpur</p>
+      <p class="gate__date plaque">12 · 13 December 2026 · Nagpur</p>
       <p class="gate__scroll" id="gateScroll" aria-hidden="true">Scroll to walk in<span></span></p>
     </div>
     <svg class="gate__arch gate__arch--3" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -101,7 +101,7 @@
 
     <!-- The lock: push the doors and they swing open -->
     <div class="knock" id="knock">
-      <p class="knock__hint" id="knockHint"><span class="knock__arrows" aria-hidden="true"><i>‹‹</i><i>››</i></span><b>Push the doors open</b><small>Press and push. They are heavy.</small></p>
+      <p class="knock__hint" id="knockHint"><span class="knock__arrows" aria-hidden="true"><i>‹‹</i><i>››</i></span><b>Tap to open the doors</b><small>Touch anywhere on the doors</small></p>
       <button class="knock__skip" id="knockSkip" type="button">Open the doors</button>
     </div>
   </div>
@@ -119,7 +119,7 @@
     <figure class="portrait" data-reveal>
       <svg class="portrait__mandala" id="mandala" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
       <div class="portrait__clip" style="clip-path:url(#c-cusp5)">
-        <img data-drift src="assets/art/painting-beach.webp" width="760" height="1139" loading="lazy" decoding="async" alt="A painted portrait of Himanshu and Simran in a quiet embrace">
+        <img data-drift class="portrait__ganesha" src="assets/art/ganesha.webp" width="765" height="1024" loading="lazy" decoding="async" alt="A painting of Lord Ganesha seated on a lotus, with marigolds and diyas">
       </div>
       <svg class="portrait__line" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"><use href="#p-cusp5"/></svg>
       <svg class="portrait__line portrait__line--outer" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true"><use href="#p-cusp5"/></svg>
@@ -145,8 +145,10 @@
       <span class="scratch__shine" aria-hidden="true"></span>
       <svg class="scratch__hand" viewBox="0 0 48 48" aria-hidden="true"><path d="M19 27V10.5a3.5 3.5 0 0 1 7 0V22l9.6 1.7a4 4 0 0 1 3.3 4.4l-1.2 9.4A6 6 0 0 1 31.8 43H23a6 6 0 0 1-4.6-2.2l-6.9-8.4a3.2 3.2 0 0 1 4.7-4.3z"/></svg>
     </div>
-    <p class="date__month" data-reveal>December 2026</p>
-    <p class="date__venue" data-reveal>Kanha Imperial Resort<small>Umred Road, Nagpur</small></p>
+    <div class="plaque plaque--arch" data-reveal>
+      <p class="date__month">December 2026</p>
+      <p class="date__venue">Kanha Imperial Resort<small>Umred Road, Nagpur</small></p>
+    </div>
     <div class="unlock" data-reveal>
       <p class="unlock__teaser" id="unlockTeaser"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3"/><rect x="4.5" y="10" width="15" height="11" rx="2.5"/><circle cx="12" cy="15.5" r="1.6"/></svg>Scratch the gold to unlock the countdown</p>
       <div class="countdown" id="countdown" aria-label="Time until the celebrations begin">
@@ -167,11 +169,11 @@
     <p class="kicker" data-reveal>Pehla Pehar · Saturday afternoon</p>
     <h2 class="title title--carnival" data-reveal data-split>Carnival of Joy</h2>
     <p class="blurb" data-reveal>Join us for an afternoon of flowers, colours, music, games and laughter.</p>
-    <p class="when" data-reveal>12 December <i></i> 2:00 pm onwards</p>
+    <p class="when plaque" data-reveal>12 December <i></i> 2:00 pm onwards</p>
     <a class="btn" href="calendar/carnival.ics" data-reveal>Add to calendar</a>
   </div>
   <div class="page__art">
-    <img class="page__bottom" data-strip="bottom" src="assets/art/carnival-bottom.webp" width="928" height="999" alt="Illustration of the couple walking into a meadow carnival of tents, pinwheels and colour" loading="lazy" decoding="async">
+    <img class="page__bottom" data-strip="bottom" src="assets/art/carnival-bottom.webp?v=3" width="928" height="999" alt="Illustration of the couple walking into a meadow carnival of tents, pinwheels and colour" loading="lazy" decoding="async">
     <div class="page__fx" aria-hidden="true">
       <span class="pinwheel pinwheel--1"></span><span class="pinwheel pinwheel--2"></span>
       <span class="gulal gulal--1"></span><span class="gulal gulal--2"></span><span class="gulal gulal--3"></span>
@@ -190,10 +192,10 @@
     <p class="kicker" data-reveal>Doosra Pehar · Saturday night</p>
     <h2 class="title title--sufi" data-reveal data-split>Sufi Night</h2>
     <p class="blurb" data-reveal>A night of dazzling outfits, flowing sufi music, dancing and all the sparkle we can find.</p>
-    <p class="when" data-reveal>12 December <i></i> 8:00 pm onwards</p>
+    <p class="when plaque" data-reveal>12 December <i></i> 8:00 pm onwards</p>
     <a class="btn" href="calendar/sufi-night.ics" data-reveal>Add to calendar</a>
   </div>
-  <img class="page__bottom" data-strip="bottom" src="assets/art/sufi-bottom.webp" width="928" height="932" alt="Illustration of the couple in a red lehenga and dark sherwani" loading="lazy" decoding="async">
+  <img class="page__bottom" data-strip="bottom" src="assets/art/sufi-bottom.webp?v=3" width="928" height="932" alt="Illustration of the couple in a red lehenga and dark sherwani" loading="lazy" decoding="async">
 </section>
 
 <!-- The sky keeps time: a new morning -->
@@ -207,10 +209,10 @@
     <p class="kicker" data-reveal>Teesra Pehar · Sunday noon</p>
     <h2 class="title title--baraat" data-reveal>Baraat <em>and</em> Wedding</h2>
     <p class="blurb" data-reveal>Join us for dhol beats, dancing, grand celebrations and unforgettable baraat vibes.</p>
-    <p class="when" data-reveal>13 December <i></i> 12:00 pm onwards</p>
+    <p class="when plaque" data-reveal>13 December <i></i> 12:00 pm onwards</p>
     <a class="btn" href="calendar/wedding.ics" data-reveal>Add to calendar</a>
   </div>
-  <img class="page__bottom" data-strip="bottom" src="assets/art/baraat-bottom.webp" width="928" height="666" alt="Illustration of the baraat dancing around a flower-decked vintage car" loading="lazy" decoding="async">
+  <img class="page__bottom" data-strip="bottom" src="assets/art/baraat-bottom.webp?v=3" width="928" height="666" alt="Illustration of the baraat dancing around a flower-decked vintage car" loading="lazy" decoding="async">
 </section>
 
 <!-- The sky keeps time: night falls again -->
@@ -224,10 +226,10 @@
     <p class="kicker" data-reveal>Chautha Pehar · Sunday night</p>
     <h2 class="title title--reception" data-reveal data-split>Reception</h2>
     <p class="blurb" data-reveal>Join us for an evening of elegance, love, heartfelt moments and beautiful celebrations.</p>
-    <p class="when" data-reveal>13 December <i></i> 8:00 pm onwards</p>
+    <p class="when plaque" data-reveal>13 December <i></i> 8:00 pm onwards</p>
     <a class="btn" href="calendar/reception.ics" data-reveal>Add to calendar</a>
   </div>
-  <img class="page__bottom" data-strip="bottom" src="assets/art/reception-bottom.webp" width="928" height="799" alt="Illustration of the couple under spotlights, he in a tuxedo, she in a magenta lehenga" loading="lazy" decoding="async">
+  <img class="page__bottom" data-strip="bottom" src="assets/art/reception-bottom.webp?v=3" width="928" height="799" alt="Illustration of the couple under spotlights, he in a tuxedo, she in a magenta lehenga" loading="lazy" decoding="async">
 </section>
 
 <!-- 8. Painted moments -->
@@ -249,9 +251,11 @@
 <section class="page page--closing" id="venue">
   <img class="page__top" data-strip="top" src="assets/art/closing-top.webp" width="928" height="432" alt="" loading="lazy" decoding="async">
   <div class="page__body">
-    <p class="kicker" data-reveal>Where</p>
-    <h2 class="heading" data-reveal>Kanha Imperial Resort</h2>
-    <p class="addr" data-reveal>Umred Road, Nagpur</p>
+    <div class="plaque plaque--arch" data-reveal>
+      <p class="kicker">Where</p>
+      <h2 class="heading">Kanha Imperial Resort</h2>
+      <p class="addr">Umred Road, Nagpur</p>
+    </div>
     <div class="actions" data-reveal>
       <a class="btn btn--solid" href="https://www.google.com/maps/search/?api=1&amp;query=Kanha+Imperial+Resort+Umred+Road+Nagpur" target="_blank" rel="noopener">Open in Maps</a>
       <a class="btn" href="calendar/all.ics">Add all four to calendar</a>
@@ -313,6 +317,6 @@
 </section>
 
 </main>
-<script src="main.js?v=13" defer></script>
+<script src="main.js?v=14" defer></script>
 </body>
 </html>

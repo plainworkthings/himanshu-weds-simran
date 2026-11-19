@@ -100,13 +100,13 @@
   // The doors are two hinged, heavy bodies. A finger drags the edge it grabbed (or simply
   // leans on the door); on release they either swing shut or carry on open and hit the stop.
   function pushDoors() {
-    const doorsEl = $('#doors'), lightEl = $('#doorLight'), hint = $('#knockHint');
+    const doorsEl = $('#doors'), lightEl = $('#doorLight');
     const MAX = 1.5; // radians, about 86°
     const mk = (id, sign) => { const el = $(id); return { el, sign, shade: $('.door__shade', el), sheen: $('.door__sheen', el), a: 0, w: 0, held: false, grab: 1, x: 0, downAt: 0, downX: 0, drawn: -1 }; };
     const L = mk('#doorL', 1), R = mk('#doorR', -1);
     const doors = [L, R];
     const other = (d) => (d === L ? R : L);
-    let W = 0, committed = false, running = true, last = 0, idleFrom = performance.now(), taps = 0, lit = -1, settleAt = 0;
+    let W = 0, committed = false, running = true, last = 0, idleFrom = performance.now(), lit = -1, settleAt = 0;
 
     // a soft wooden thump when a door meets its stop
     let actx = null;
@@ -191,12 +191,8 @@
       const now = performance.now(); idleFrom = now;
       if (!pointers.size) knock.classList.remove('is-pushing');
       if (committed) return;
-      const tap = now - d.downAt < 230 && Math.abs(d.x - d.downX) < 8;
-      if (tap) {                                    // a knock: the door gives a little, and more each time
-        taps++; d.w += 2.4 + taps * .8; other(d).w += 1.2;
-        if (taps >= 3) commit();
-        else hint.querySelector('small').textContent = 'Not a knock. Give them a proper push.';
-      } else if (d.a > .42 || d.w > 2 || dragAngle(d) > .7) commit(); // pushed far or fast enough: it carries on
+      d.w += 2.4; other(d).w += 1.2; // any touch opens them: a tap, a press or a push
+      commit();
     };
     knock.addEventListener('pointerup', release); knock.addEventListener('pointercancel', release);
     $('#knockSkip').addEventListener('click', () => { wake(); primeSong(); commit(); });
